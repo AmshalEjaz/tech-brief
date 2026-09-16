@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 
 type Article = {
   id: string;
@@ -561,7 +562,55 @@ function App() {
                       : "rounded-bl-md border border-slate-200 bg-white text-slate-700"
                     }`}
                 >
-                  {message.content}
+                  {message.role === "assistant" ? (
+                    <ReactMarkdown
+                      components={{
+                        p: ({ children }) => (
+                          <p className="mb-2 last:mb-0">{children}</p>
+                        ),
+                        ul: ({ children }) => (
+                          <ul className="my-2 list-disc space-y-1 pl-5">
+                            {children}
+                          </ul>
+                        ),
+                        ol: ({ children }) => (
+                          <ol className="my-2 list-decimal space-y-1 pl-5">
+                            {children}
+                          </ol>
+                        ),
+                        li: ({ children }) => <li>{children}</li>,
+                        strong: ({ children }) => (
+                          <strong className="font-semibold text-slate-900">
+                            {children}
+                          </strong>
+                        ),
+                        h1: ({ children }) => (
+                          <h1 className="mb-2 mt-3 text-base font-bold text-slate-950">
+                            {children}
+                          </h1>
+                        ),
+                        h2: ({ children }) => (
+                          <h2 className="mb-2 mt-3 text-sm font-bold text-slate-950">
+                            {children}
+                          </h2>
+                        ),
+                        h3: ({ children }) => (
+                          <h3 className="mb-2 mt-2 text-sm font-semibold text-slate-950">
+                            {children}
+                          </h3>
+                        ),
+                        code: ({ children }) => (
+                          <code className="rounded bg-slate-100 px-1 py-0.5 text-xs text-slate-800">
+                            {children}
+                          </code>
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  ) : (
+                    message.content
+                  )}
                 </div>
               </div>
             ))}

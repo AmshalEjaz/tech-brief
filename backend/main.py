@@ -38,6 +38,46 @@ if not GEMINI_API_KEY:
 gemini_client = genai.Client(
     api_key=GEMINI_API_KEY
 )
+
+GEMINI_MODELS = [
+    "gemini-3.7-flash",
+    "gemini-2.5-flash",
+]
+
+
+def generate_with_gemini_fallback(prompt: str) -> str:
+    """Try Gemini models in order and return the first successful response."""
+    last_error = None
+
+    for model_name in GEMINI_MODELS:
+        try:
+            print(f"Trying Gemini model: {model_name}")
+
+            response = gemini_client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+            )
+
+            answer = getattr(response, "text", None)
+
+            if not answer:
+                raise RuntimeError(
+                    f"{model_name} returned an empty response."
+                )
+
+            print(f"Gemini success: {model_name}")
+            return answer
+
+        except Exception as exc:
+            last_error = exc
+            print(
+                f"Gemini model failed ({model_name}):",
+                repr(exc),
+            )
+
+    raise RuntimeError(
+        f"All Gemini models failed. Last error: {last_error}"
+    )
 # Create database tables if they do not already exist
 Base.metadata.create_all(bind=engine)
 
@@ -935,15 +975,9 @@ Reply naturally to the user's latest message.
 """
 
         try:
-            response = gemini_client.models.generate_content(
-                model="gemini-3.7-flash",
-                contents=general_prompt,
+            answer = generate_with_gemini_fallback(
+                general_prompt
             )
-
-            answer = getattr(response, "text", None)
-
-            if not answer:
-                raise RuntimeError("Gemini returned an empty response.")
 
         except Exception as exc:
             print("General conversation Gemini error:", repr(exc))
@@ -1037,19 +1071,11 @@ Reply naturally to the user's latest message.
         articles = db.scalars(query).all()
 
         if not articles:
-            fallback_query = (
-                select(Article)
-                .order_by(Article.published_at.desc())
-                .limit(8)
-            )
-
-            articles = db.scalars(
-                fallback_query
-            ).all()
-
-        if not articles:
             return {
-                "reply": "I don't have any stored TechBrief articles yet.",
+                "reply": (
+                    "I couldn't find any stored TechBrief articles "
+                    f"related to \"{question}\"."
+                ),
                 "articles_used": 0,
             }
 
@@ -1112,15 +1138,9 @@ Answer only what the user asked.
 """
 
         try:
-            response = gemini_client.models.generate_content(
-                model="gemini-3.7-flash",
-                contents=news_prompt,
+            answer = generate_with_gemini_fallback(
+                news_prompt
             )
-
-            answer = getattr(response, "text", None)
-
-            if not answer:
-                raise RuntimeError("Gemini returned an empty response.")
 
         except Exception as gemini_exc:
             print("News Gemini error:", repr(gemini_exc))
