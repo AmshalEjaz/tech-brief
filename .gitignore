@@ -1,32 +1,7 @@
-# Frontend dependencies/build
+.env
+**/.env
+backend/.env
+chroma_db/
+venv/
 node_modules/
-dist/
-dist-ssr/
-*.local
-
-# Python backend
-backend/venv/
-backend/.venv/
-backend/__pycache__/
-backend/**/*.pyc
-*.py[cod]
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-# Editor / OS files
-.vscode/*
-!.vscode/extensions.json
-.idea/
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+__pycache__/
