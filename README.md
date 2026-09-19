@@ -74,3 +74,9 @@ Not implemented yet:
 - User-managed RSS sources
 - Saved/bookmarked stories
 - Scheduled morning/evening briefs
+
+## Preview
+<img width="1364" height="647" alt="image" src="https://github.com/user-attachments/assets/1821dcc2-e96a-4444-a7b2-6b189178abb4" />
+<img width="1366" height="5870" alt="image" src="https://github.com/user-attachments/assets/9a6f19c8-5f54-4650-8c48-77bdc7d812eb" />
+
+
